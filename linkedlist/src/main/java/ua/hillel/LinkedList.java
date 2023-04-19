@@ -1,69 +1,163 @@
 package ua.hillel;
 
+import java.util.NoSuchElementException;
+import java.util.Objects;
+
 /**
  * Implement doubly linked list that is based on {@link Node<T>} class (you should implement it as well).
  * This is a simplified version of {@link java.util.LinkedList}.
  */
 public class LinkedList<T> implements List<T> {
+    private static class Node<T> {
+        T element;
+        Node<T> prev;
+        Node<T> next;
 
+        public Node(T element) {
+            this.element = element;
+            this.next = null;
+            this.prev = null;
+        }
+    }
+
+    private Node<T> head;
+    private Node<T> tail;
+    private int size;
+
+    private Node<T> getNode(int index) {
+        Node<T> currNode = head;
+        for (int i = 0; i < index; i++) {
+            currNode = currNode.next;
+        }
+        return currNode;
+    }
 
     @Override
     public void add(T element) {
-
+        Node<T> newElement = new Node<>(element);
+        if (head == null) {
+            head = tail = newElement;
+        } else {
+            tail.next = newElement;
+            tail = newElement;
+        }
+        size++;
     }
 
     @Override
     public void add(int index, T element) {
-
+        Objects.checkIndex(index, size + 1);
+        Node<T> newElement = new Node<>(element);
+        if (head == null || index == size) {
+            add(element);
+        } else if (index == 0) {
+            newElement.next = head;
+            head = newElement;
+        } else {
+            Node<T> prevElement = getNode(index - 1);
+            newElement.next = prevElement.next;
+            prevElement.next = newElement;
+        }
+        size++;
     }
 
     @Override
     public T get(int index) {
-        return null;
+        Objects.checkIndex(index, size);
+        return getNode(index).element;
     }
 
     @Override
     public T get(T element) {
+        Node<T> currElement = head;
+        while (currElement != null) {
+            if (currElement.element.equals(element)) {
+                return element;
+            }
+            currElement = currElement.next;
+        }
         return null;
     }
 
     @Override
     public T getFirst() {
-        return null;
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return head.element;
     }
 
     @Override
     public T getLast() {
-        return null;
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+        return tail.element;
     }
 
     @Override
     public void set(int index, T element) {
-
+        Objects.checkIndex(index, size);
+        Node<T> node = getNode(index);
+        node.element = element;
     }
 
     @Override
     public boolean remove(int index) {
-        return false;
+        if (index < 0 || index > size) {
+            return false;
+        }
+        Node<T> currElement = getNode(index);
+        if (size == 1) {
+            head = null;
+            tail = null;
+        } else if (index == 0) {
+            head = head.next;
+            head.prev = null;
+        } else if (index == size - 1) {
+            tail = tail.prev;
+            tail.next = null;
+        } else {
+            currElement.prev.next = currElement.next;
+            currElement.next.prev = currElement.prev;
+        }
+        size--;
+        return true;
     }
 
     @Override
     public boolean contains(T element) {
+        Node<T> currElement = head;
+        while (currElement != null) {
+            if (currElement.element.equals(element)) {
+                return true;
+            }
+            currElement = currElement.next;
+        }
         return false;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return size == 0;
     }
 
     @Override
     public int size() {
-        return 0;
+        return size;
     }
 
     @Override
     public void clear() {
-
+        Node<T> currElement = head;
+        while (currElement != null) {
+            Node<T> nextEl = currElement.next;
+            currElement.prev = null;
+            currElement.next = null;
+            currElement.element = null;
+            currElement = nextEl;
+        }
+        head = tail = null;
+        size = 0;
     }
 }
