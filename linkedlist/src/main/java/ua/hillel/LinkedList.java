@@ -54,9 +54,9 @@ public class LinkedList<T> implements List<T> {
             newElement.next = head;
             head = newElement;
         } else {
-            Node<T> prevIndex = getNode(index - 1);
-            newElement.next = prevIndex.next;
-            prevIndex.next = newElement;
+            Node<T> prevElement = getNode(index - 1);
+            newElement.next = prevElement.next;
+            prevElement.next = newElement;
         }
         size++;
     }
@@ -111,10 +111,10 @@ public class LinkedList<T> implements List<T> {
         if (size == 1) {
             head = null;
             tail = null;
-        } else if (currElement == head) {
+        } else if (index == 0) {
             head = head.next;
             head.prev = null;
-        } else if (currElement == tail) {
+        } else if (index == size - 1) {
             tail = tail.prev;
             tail.next = null;
         } else {
@@ -139,7 +139,7 @@ public class LinkedList<T> implements List<T> {
 
     @Override
     public boolean isEmpty() {
-        return size == 0 && head == null;
+        return size == 0;
     }
 
     @Override
